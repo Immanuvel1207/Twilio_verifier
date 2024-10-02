@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -7,9 +8,11 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const accountSid = 'AC39845ecc63085bb5a8aa57f3efd21fa4';
-const authToken = 'ba88038df55ad7ffb8609c26bb2a19dd';
-const verifyServiceSid = 'VAe5a071edb4acd051aa1f679a4e9ab049';
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+
 const client = new twilio(accountSid, authToken);
 
 // Send OTP to new user
@@ -52,7 +55,7 @@ app.post('/send-message', async (req, res) => {
   try {
     const message = await client.messages.create({
       body: messageBody,
-      from: '+15862104353', // Your Twilio number
+      from: twilioPhoneNumber, // Twilio number from .env
       to: phoneNumber,
     });
     res.status(200).send({ message: 'Message sent', sid: message.sid });
